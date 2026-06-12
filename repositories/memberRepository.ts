@@ -7,6 +7,7 @@ type MemberRow = {
   team_id: string;
   name: string;
   role: 'leader' | 'sub_leader' | 'member';
+  created_at: string;
 };
 
 // DB の英語 role → 表示用の日本語 MemberRole
@@ -18,17 +19,18 @@ const roleMap: Record<MemberRow['role'], MemberRole> = {
 
 function toMember(row: MemberRow): Member {
   return {
-    id:     row.id,
-    teamId: row.team_id,
-    name:   row.name,
-    role:   roleMap[row.role],
+    id:        row.id,
+    teamId:    row.team_id,
+    name:      row.name,
+    role:      roleMap[row.role],
+    createdAt: row.created_at,
   };
 }
 
 export async function getMembersByTeamId(teamId: string): Promise<Member[]> {
   const { data, error } = await supabase
     .from('members')
-    .select('id, team_id, name, role')
+    .select('id, team_id, name, role, created_at')
     .eq('team_id', teamId)
     .order('order_index', { ascending: true })
     .order('created_at',  { ascending: true });
@@ -40,7 +42,7 @@ export async function getMembersByTeamId(teamId: string): Promise<Member[]> {
 export async function getMemberById(id: string): Promise<Member | null> {
   const { data, error } = await supabase
     .from('members')
-    .select('id, team_id, name, role')
+    .select('id, team_id, name, role, created_at')
     .eq('id', id)
     .maybeSingle();
 

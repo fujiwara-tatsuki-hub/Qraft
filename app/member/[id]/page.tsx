@@ -40,7 +40,7 @@ export default async function MemberDetailPage({ params }: Props) {
   ]);
 
   const complianceGrade = isLeader ? undefined : calculateComplianceGrade(evaluations);
-  const deadlineGrade   = isLeader ? undefined : calculateDeadlineGrade(deadlineRecords);
+  const deadlineGrade   = isLeader ? undefined : calculateDeadlineGrade(deadlineRecords, member.createdAt);
   const referralGrade   = isLeader ? undefined : calculateReferralGrade(referralRecords);
   const overallGrade    = isLeader ? undefined : calculateGrade(complianceGrade, deadlineGrade, referralGrade);
 
@@ -58,7 +58,7 @@ export default async function MemberDetailPage({ params }: Props) {
     const nonLeaders = teamMembers.filter((m) => m.role !== 'リーダー');
     const memberGrades = nonLeaders.map((m) => {
       const cg = calculateComplianceGrade(teamEvals.filter((e) => e.memberId === m.id));
-      const dg = calculateDeadlineGrade(teamDeadlines.filter((dl) => dl.memberId === m.id));
+      const dg = calculateDeadlineGrade(teamDeadlines.filter((dl) => dl.memberId === m.id), m.createdAt);
       const rg = calculateReferralGrade(teamReferrals.filter((rf) => rf.memberId === m.id));
       return calculateGrade(cg, dg, rg);
     });

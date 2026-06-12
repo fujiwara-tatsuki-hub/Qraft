@@ -1,15 +1,30 @@
 import type { Grade } from '@/types';
 import type { DeadlineRecord } from '@/types/deadlineRecord';
 
-// NG件数 ÷ 経過月数（最低1ヶ月）でレートを算出してグレードに変換
-// 0件（記録なし）→ C（デフォルト）
-// レート ≤ 0.5件/月 → B（2ヶ月に1件以内）
-// レート ≤ 1.0件/月 → C（月1件程度）
-// レート  > 1.0件/月 → D（月1件超）
-export function calculateDeadlineGrade(records: DeadlineRecord[]): Grade {
+// NG件数 + 期間でグレードを算出
+//
+// NG記録なし（memberCreatedAt なし）        → C
+// NG記録なし、1ヶ月未満                     → C
+// NG記録なし、1ヶ月以上                     → B
+// NG記録なし、2ヶ月以上                     → A
+//
+// NG記録あり（レート = NG件数 ÷ 経過月数）:
+//   レート ≤ 0.5件/月（2ヶ月に1件以内）    → B
+//   レート ≤ 1.0件/月（月1件程度）         → C
+//   レート  > 1.0件/月（月1件超）          → D
+export function calculateDeadlineGrade(
+  records: DeadlineRecord[],
+  memberCreatedAt?: string,
+): Grade {
   const ngRecords = records.filter((r) => !r.isCompleted);
 
-  if (ngRecords.length === 0) return 'C';
+  if (ngRecords.length === 0) {
+    if (!memberCreatedAt) return 'C';
+    const months = (Date.now() - new Date(memberCreatedAt).getTime()) / (1000 * 60 * 60 * 24 * 30);
+    if (months >= 2) return 'A';
+    if (months >= 1) return 'B';
+    return 'C';
+  }
 
   const earliestMs = Math.min(...ngRecords.map((r) => new Date(r.createdAt).getTime()));
   const months = Math.max(1, (Date.now() - earliestMs) / (1000 * 60 * 60 * 24 * 30));

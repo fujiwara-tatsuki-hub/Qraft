@@ -10,6 +10,7 @@ export type Member = {
   teamId: string;
   name: string;
   role: MemberRole;
+  createdAt?: string;
   overallGrade?: Grade;
 };
 

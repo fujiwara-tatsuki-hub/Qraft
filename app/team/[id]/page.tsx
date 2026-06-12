@@ -39,7 +39,7 @@ export default async function TeamDetailPage({ params }: Props) {
         getReferralRecordsByMemberId(member.id),
       ]);
       const complianceGrade = calculateComplianceGrade(evaluations);
-      const deadlineGrade   = calculateDeadlineGrade(deadlineRecords);
+      const deadlineGrade   = calculateDeadlineGrade(deadlineRecords, member.createdAt);
       const referralGrade   = calculateReferralGrade(referralRecords);
       const overallGrade    = calculateGrade(complianceGrade, deadlineGrade, referralGrade);
       return { complianceGrade, deadlineGrade, referralGrade, overallGrade };

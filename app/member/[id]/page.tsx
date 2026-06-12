@@ -72,7 +72,7 @@ export default async function MemberDetailPage({ params }: Props) {
               </span>
             </div>
           </div>
-          <EvaluationBadge grade={overallGrade} label="総合評価" />
+          <EvaluationBadge grade={overallGrade} label="総合評価" size="lg" />
         </div>
 
         {/* 評価内訳 */}

@@ -45,7 +45,7 @@ export default function MemberTable({ members }: Props) {
               </td>
               <td className="py-3 px-4">
                 <div className="flex justify-center">
-                  <EvaluationBadge grade={member.overallGrade} />
+                  <EvaluationBadge grade={member.overallGrade} size="sm" />
                 </div>
               </td>
               <td className="py-3 px-4 text-right">

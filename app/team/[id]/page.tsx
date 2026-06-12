@@ -84,7 +84,7 @@ export default async function TeamDetailPage({ params }: Props) {
             <h1 className="text-2xl font-bold text-gray-900">{teamWithGrades.name}</h1>
             <p className="text-sm text-gray-400 mt-1">{teamWithGrades.memberCount}名</p>
           </div>
-          <EvaluationBadge grade={teamWithGrades.overallGrade} label="総合評価" />
+          <EvaluationBadge grade={teamWithGrades.overallGrade} label="総合評価" size="lg" />
         </div>
 
         {/* リーダー・サブリーダー */}

@@ -12,6 +12,7 @@ import { calculateDeadlineGrade } from '@/utils/calculateDeadlineGrade';
 import { calculateReferralGrade } from '@/utils/calculateReferralGrade';
 import { calculateGrade } from '@/utils/calculateGrade';
 import EvaluationBadge from '@/components/EvaluationBadge';
+import MemberNameForm from '@/components/MemberNameForm';
 import ComplianceForm from '@/components/ComplianceForm';
 import DeadlineForm from '@/components/DeadlineForm';
 import ReferralForm from '@/components/ReferralForm';
@@ -82,6 +83,12 @@ export default async function MemberDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* 氏名変更 */}
+      <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+        <h2 className="text-base font-semibold text-gray-900 mb-3">氏名変更</h2>
+        <MemberNameForm memberId={id} currentName={member.name} />
+      </section>
 
       {/* ① コンプライアンス評価入力 */}
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">

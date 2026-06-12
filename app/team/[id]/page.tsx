@@ -14,6 +14,8 @@ import { calculateGrade } from '@/utils/calculateGrade';
 import { calculateTeamScore } from '@/utils/calculateTeamScore';
 import EvaluationBadge from '@/components/EvaluationBadge';
 import MemberTable from '@/components/MemberTable';
+import TeamNameForm from '@/components/TeamNameForm';
+import LeaderSelectForm from '@/components/LeaderSelectForm';
 import type { Member } from '@/types/member';
 
 type Props = {
@@ -114,6 +116,32 @@ export default async function TeamDetailPage({ params }: Props) {
           <p className="text-sm text-gray-400 mt-0.5">{membersWithGrades.length}名</p>
         </div>
         <MemberTable members={membersWithGrades} />
+      </div>
+
+      {/* チーム編集 */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-5">
+        <h2 className="text-base font-semibold text-gray-900 mb-5">チーム編集</h2>
+
+        <div className="space-y-6">
+          {/* チーム名変更 */}
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-2">チーム名</p>
+            <TeamNameForm teamId={teamWithGrades.id} currentName={teamWithGrades.name} />
+          </div>
+
+          {/* リーダー・サブリーダー変更 */}
+          <div className="pt-5 border-t border-gray-100">
+            <p className="text-sm font-medium text-gray-700 mb-4">
+              リーダー・サブリーダー変更
+            </p>
+            <LeaderSelectForm
+              teamId={teamWithGrades.id}
+              members={teamMembers}
+              currentLeaderId={teamMembers.find((m) => m.role === 'リーダー')?.id}
+              currentSubLeaderId={teamMembers.find((m) => m.role === 'サブリーダー')?.id}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

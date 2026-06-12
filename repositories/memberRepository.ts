@@ -47,3 +47,37 @@ export async function getMemberById(id: string): Promise<Member | null> {
   if (!data) return null;
   return toMember(data as MemberRow);
 }
+
+export async function updateMemberName(id: string, name: string): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .update({ name })
+    .eq('id', id);
+  if (error) throw new Error(`updateMemberName: ${error.message}`);
+}
+
+// チーム内の全メンバーを一旦 member にリセットし、指定メンバーに leader/sub_leader を付与
+// リーダー変更フォームから呼び出す
+export async function resetAndSetMemberRoles(
+  teamId: string,
+  leaderId: string,
+  subLeaderId: string,
+): Promise<void> {
+  const { error: resetError } = await supabase
+    .from('members')
+    .update({ role: 'member' })
+    .eq('team_id', teamId);
+  if (resetError) throw new Error(`resetAndSetMemberRoles (reset): ${resetError.message}`);
+
+  const { error: leaderError } = await supabase
+    .from('members')
+    .update({ role: 'leader' })
+    .eq('id', leaderId);
+  if (leaderError) throw new Error(`resetAndSetMemberRoles (leader): ${leaderError.message}`);
+
+  const { error: subError } = await supabase
+    .from('members')
+    .update({ role: 'sub_leader' })
+    .eq('id', subLeaderId);
+  if (subError) throw new Error(`resetAndSetMemberRoles (sub_leader): ${subError.message}`);
+}

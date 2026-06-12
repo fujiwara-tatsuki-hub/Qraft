@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { upsertEvaluation } from '@/repositories/evaluationRepository';
 import { createDeadlineRecord } from '@/repositories/deadlineRepository';
 import { createReferralRecord } from '@/repositories/referralRepository';
+import { updateMemberName, getMemberById } from '@/repositories/memberRepository';
+import { updateTeamLeaderName, updateTeamSubLeaderName } from '@/repositories/teamRepository';
 import type { Grade } from '@/types';
 import type { EvaluatorType } from '@/types/evaluation';
 import type { DeadlineCategory } from '@/types/deadlineRecord';
@@ -107,5 +109,37 @@ export async function submitReferral(
     return { error: null, success: true };
   } catch (e) {
     return { error: e instanceof Error ? e.message : '記録に失敗しました', success: false };
+  }
+}
+
+export async function submitMemberName(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const memberId = (formData.get('memberId') ?? '').toString();
+  const name     = (formData.get('name') ?? '').toString().trim();
+
+  if (!memberId) return { error: 'メンバーIDが不正です', success: false };
+  if (!name)     return { error: '氏名を入力してください', success: false };
+
+  try {
+    await updateMemberName(memberId, name);
+
+    // リーダー/サブリーダーの場合はチームの表示名も同期
+    const member = await getMemberById(memberId);
+    if (member?.role === 'リーダー') {
+      await updateTeamLeaderName(member.teamId, name);
+      revalidatePath(`/team/${member.teamId}`);
+      revalidatePath('/');
+    } else if (member?.role === 'サブリーダー') {
+      await updateTeamSubLeaderName(member.teamId, name);
+      revalidatePath(`/team/${member.teamId}`);
+      revalidatePath('/');
+    }
+
+    revalidatePath(`/member/${memberId}`);
+    return { error: null, success: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : '保存に失敗しました', success: false };
   }
 }

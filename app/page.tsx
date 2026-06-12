@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getTeams } from '@/repositories/teamRepository';
 import { getMembersByTeamId } from '@/repositories/memberRepository';
 import { getEvaluationsByTeamId } from '@/repositories/evaluationRepository';

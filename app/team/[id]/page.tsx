@@ -40,7 +40,7 @@ export default async function TeamDetailPage({ params }: Props) {
       ]);
       const complianceGrade = calculateComplianceGrade(evaluations);
       const deadlineGrade   = calculateDeadlineGrade(deadlineRecords, member.createdAt);
-      const referralGrade   = calculateReferralGrade(referralRecords);
+      const referralGrade   = calculateReferralGrade(referralRecords, member.createdAt);
       const overallGrade    = calculateGrade(complianceGrade, deadlineGrade, referralGrade);
       return { complianceGrade, deadlineGrade, referralGrade, overallGrade };
     })
@@ -51,12 +51,14 @@ export default async function TeamDetailPage({ params }: Props) {
     overallGrade: memberGradeResults[i].overallGrade,
   }));
 
+  // リーダーをチームスコアから除外
+  const nonLeaderResults = memberGradeResults.filter((_, i) => teamMembers[i].role !== 'リーダー');
   const teamWithGrades = {
     ...team,
-    overallGrade:    calculateTeamScore(memberGradeResults.map((g) => g.overallGrade)),
-    complianceGrade: calculateTeamScore(memberGradeResults.map((g) => g.complianceGrade)),
-    deadlineGrade:   calculateTeamScore(memberGradeResults.map((g) => g.deadlineGrade)),
-    referralGrade:   calculateTeamScore(memberGradeResults.map((g) => g.referralGrade)),
+    overallGrade:    calculateTeamScore(nonLeaderResults.map((g) => g.overallGrade)),
+    complianceGrade: calculateTeamScore(nonLeaderResults.map((g) => g.complianceGrade)),
+    deadlineGrade:   calculateTeamScore(nonLeaderResults.map((g) => g.deadlineGrade)),
+    referralGrade:   calculateTeamScore(nonLeaderResults.map((g) => g.referralGrade)),
   };
 
   return (

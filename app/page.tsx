@@ -21,10 +21,11 @@ async function buildTeamWithGrades(team: Team): Promise<Team> {
     getReferralRecordsByTeamId(team.id),
   ]);
 
-  const perMember = members.map((m) => {
+  const nonLeaders = members.filter((m) => m.role !== 'リーダー');
+  const perMember = nonLeaders.map((m) => {
     const compliance = calculateComplianceGrade(evaluations.filter((e) => e.memberId === m.id));
     const deadline   = calculateDeadlineGrade(deadlineRecords.filter((d) => d.memberId === m.id), m.createdAt);
-    const referral   = calculateReferralGrade(referralRecords.filter((r) => r.memberId === m.id));
+    const referral   = calculateReferralGrade(referralRecords.filter((r) => r.memberId === m.id), m.createdAt);
     const overall    = calculateGrade(compliance, deadline, referral);
     return { compliance, deadline, referral, overall };
   });

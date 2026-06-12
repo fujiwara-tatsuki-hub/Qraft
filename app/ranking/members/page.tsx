@@ -46,7 +46,7 @@ export default async function MembersRankingPage() {
       ]);
       const complianceGrade = calculateComplianceGrade(evaluations);
       const deadlineGrade   = calculateDeadlineGrade(deadlineRecords, member.createdAt);
-      const referralGrade   = calculateReferralGrade(referralRecords);
+      const referralGrade   = calculateReferralGrade(referralRecords, member.createdAt);
       const overallGrade    = calculateGrade(complianceGrade, deadlineGrade, referralGrade);
       return { ...member, overallGrade };
     })

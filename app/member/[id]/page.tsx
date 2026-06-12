@@ -41,7 +41,7 @@ export default async function MemberDetailPage({ params }: Props) {
 
   const complianceGrade = isLeader ? undefined : calculateComplianceGrade(evaluations);
   const deadlineGrade   = isLeader ? undefined : calculateDeadlineGrade(deadlineRecords, member.createdAt);
-  const referralGrade   = isLeader ? undefined : calculateReferralGrade(referralRecords);
+  const referralGrade   = isLeader ? undefined : calculateReferralGrade(referralRecords, member.createdAt);
   const overallGrade    = isLeader ? undefined : calculateGrade(complianceGrade, deadlineGrade, referralGrade);
 
   // リーダーはチーム全体の評価を表示
@@ -59,7 +59,7 @@ export default async function MemberDetailPage({ params }: Props) {
     const memberGrades = nonLeaders.map((m) => {
       const cg = calculateComplianceGrade(teamEvals.filter((e) => e.memberId === m.id));
       const dg = calculateDeadlineGrade(teamDeadlines.filter((dl) => dl.memberId === m.id), m.createdAt);
-      const rg = calculateReferralGrade(teamReferrals.filter((rf) => rf.memberId === m.id));
+      const rg = calculateReferralGrade(teamReferrals.filter((rf) => rf.memberId === m.id), m.createdAt);
       return calculateGrade(cg, dg, rg);
     });
     displayGrade = calculateTeamScore(memberGrades);

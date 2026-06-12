@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -47,37 +48,79 @@ function MedalIcon({ className }: { className?: string }) {
   );
 }
 
+function ChevronLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
+  );
+}
+
 const NAV_ITEMS: NavItem[] = [
-  { href: '/',                  label: 'Teams List',      icon: UsersIcon  },
-  { href: '/members',           label: 'Members List',    icon: UserIcon   },
-  { href: '/ranking/teams',     label: 'Teams Ranking',   icon: TrophyIcon },
-  { href: '/ranking/members',   label: 'Members Ranking', icon: MedalIcon  },
+  { href: '/',                label: 'Teams List',      icon: UsersIcon  },
+  { href: '/members',         label: 'Members List',    icon: UserIcon   },
+  { href: '/ranking/teams',   label: 'Teams Ranking',   icon: TrophyIcon },
+  { href: '/ranking/members', label: 'Members Ranking', icon: MedalIcon  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className="hidden lg:flex flex-col w-52 shrink-0 bg-white border-r border-gray-100">
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+    <aside
+      className={`hidden lg:flex flex-col shrink-0 bg-white border-r border-gray-100 transition-all duration-200 ${
+        collapsed ? 'w-14' : 'w-52'
+      }`}
+    >
+      <nav className="flex-1 px-2 py-4 space-y-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isNavActive(href, pathname);
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              title={collapsed ? label : undefined}
+              className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                collapsed ? 'justify-center' : ''
+              } ${
                 active
                   ? 'bg-indigo-50 text-indigo-700'
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
               }`}
             >
               <Icon className="w-5 h-5 shrink-0" />
-              {label}
+              {!collapsed && <span>{label}</span>}
             </Link>
           );
         })}
       </nav>
+
+      {/* 折り畳みトグル */}
+      <div className="px-2 pb-4">
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors ${
+            collapsed ? 'justify-center' : ''
+          }`}
+          aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'}
+        >
+          {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : (
+            <>
+              <ChevronLeftIcon className="w-4 h-4" />
+              <span>折り畳む</span>
+            </>
+          )}
+        </button>
+      </div>
     </aside>
   );
 }

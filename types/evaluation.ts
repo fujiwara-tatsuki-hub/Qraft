@@ -5,20 +5,22 @@ export type EvaluatorType = 'leader' | 'sales' | 'branch_manager';
 
 // evaluations テーブルの1行に対応する型
 export type Evaluation = {
-  id:              string;
-  memberId:        string;
-  evaluatorType:   EvaluatorType;
-  attendanceGrade: Grade; // 勤怠
-  reportingGrade:  Grade; // 報連相
-  initiativeGrade: Grade; // 積極性
-  createdAt:       string;
+  id:                string;
+  memberId:          string;
+  evaluatorType:     EvaluatorType;
+  attendanceGrade:   Grade; // 勤怠
+  reportingGrade:    Grade; // 報連相
+  initiativeGrade:   Grade; // 積極性
+  workAttitudeGrade: Grade; // 勤務態度
+  createdAt:         string;
 };
 
 // 評価登録時の入力型（CRUD実装時に使用）
 export type CreateEvaluationInput = {
-  memberId:        string;
-  evaluatorType:   EvaluatorType;
-  attendanceGrade: Grade;
-  reportingGrade:  Grade;
-  initiativeGrade: Grade;
+  memberId:          string;
+  evaluatorType:     EvaluatorType;
+  attendanceGrade:   Grade;
+  reportingGrade:    Grade;
+  initiativeGrade:   Grade;
+  workAttitudeGrade: Grade;
 };

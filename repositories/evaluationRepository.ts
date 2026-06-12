@@ -3,24 +3,26 @@ import type { Evaluation, CreateEvaluationInput } from '@/types/evaluation';
 
 // Supabase から返される生の行型（snake_case）
 type EvaluationRow = {
-  id:               string;
-  member_id:        string;
-  evaluator_type:   'leader' | 'sales' | 'branch_manager';
-  attendance_grade: 'A' | 'B' | 'C' | 'D';
-  reporting_grade:  'A' | 'B' | 'C' | 'D';
-  initiative_grade: 'A' | 'B' | 'C' | 'D';
-  created_at:       string;
+  id:                  string;
+  member_id:           string;
+  evaluator_type:      'leader' | 'sales' | 'branch_manager';
+  attendance_grade:    'A' | 'B' | 'C' | 'D';
+  reporting_grade:     'A' | 'B' | 'C' | 'D';
+  initiative_grade:    'A' | 'B' | 'C' | 'D';
+  work_attitude_grade: 'A' | 'B' | 'C' | 'D';
+  created_at:          string;
 };
 
 function toEvaluation(row: EvaluationRow): Evaluation {
   return {
-    id:              row.id,
-    memberId:        row.member_id,
-    evaluatorType:   row.evaluator_type,
-    attendanceGrade: row.attendance_grade,
-    reportingGrade:  row.reporting_grade,
-    initiativeGrade: row.initiative_grade,
-    createdAt:       row.created_at,
+    id:                row.id,
+    memberId:          row.member_id,
+    evaluatorType:     row.evaluator_type,
+    attendanceGrade:   row.attendance_grade,
+    reportingGrade:    row.reporting_grade,
+    initiativeGrade:   row.initiative_grade,
+    workAttitudeGrade: row.work_attitude_grade,
+    createdAt:         row.created_at,
   };
 }
 
@@ -66,11 +68,12 @@ export async function createEvaluation(input: CreateEvaluationInput): Promise<Ev
   const { data, error } = await supabase
     .from('evaluations')
     .insert({
-      member_id:        input.memberId,
-      evaluator_type:   input.evaluatorType,
-      attendance_grade: input.attendanceGrade,
-      reporting_grade:  input.reportingGrade,
-      initiative_grade: input.initiativeGrade,
+      member_id:           input.memberId,
+      evaluator_type:      input.evaluatorType,
+      attendance_grade:    input.attendanceGrade,
+      reporting_grade:     input.reportingGrade,
+      initiative_grade:    input.initiativeGrade,
+      work_attitude_grade: input.workAttitudeGrade,
     })
     .select()
     .single();
@@ -95,9 +98,10 @@ export async function upsertEvaluation(input: CreateEvaluationInput): Promise<Ev
     const { data, error } = await supabase
       .from('evaluations')
       .update({
-        attendance_grade: input.attendanceGrade,
-        reporting_grade:  input.reportingGrade,
-        initiative_grade: input.initiativeGrade,
+        attendance_grade:    input.attendanceGrade,
+        reporting_grade:     input.reportingGrade,
+        initiative_grade:    input.initiativeGrade,
+        work_attitude_grade: input.workAttitudeGrade,
       })
       .eq('id', existing.id)
       .select()

@@ -69,10 +69,11 @@ export default function ComplianceForm({ memberId, existingEvaluations }: Props)
   const getInitialGrades = (type: EvaluatorType) => {
     const e = existingEvaluations.find((ev) => ev.evaluatorType === type);
     return {
-      attendance: e?.attendanceGrade ?? 'B',
-      reporting:  e?.reportingGrade  ?? 'B',
-      initiative: e?.initiativeGrade ?? 'B',
-    } as { attendance: Grade; reporting: Grade; initiative: Grade };
+      attendance:   e?.attendanceGrade   ?? 'B',
+      reporting:    e?.reportingGrade    ?? 'B',
+      initiative:   e?.initiativeGrade   ?? 'B',
+      workAttitude: e?.workAttitudeGrade ?? 'B',
+    } as { attendance: Grade; reporting: Grade; initiative: Grade; workAttitude: Grade };
   };
 
   const [grades, setGrades] = useState(getInitialGrades('leader'));
@@ -138,6 +139,12 @@ export default function ComplianceForm({ memberId, existingEvaluations }: Props)
           label="積極性"
           value={grades.initiative}
           onChange={(g) => setGrades((prev) => ({ ...prev, initiative: g }))}
+        />
+        <GradeSelector
+          name="workAttitudeGrade"
+          label="勤務態度"
+          value={grades.workAttitude}
+          onChange={(g) => setGrades((prev) => ({ ...prev, workAttitude: g }))}
         />
       </div>
 

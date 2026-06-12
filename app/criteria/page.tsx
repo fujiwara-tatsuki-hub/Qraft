@@ -100,14 +100,15 @@ export default function CriteriaPage() {
 
         {/* コンプライアンス評価 */}
         <Section number="①" title="コンプライアンス評価">
-          <p className="text-sm text-gray-500 mb-4">評価者（最大3名）が以下の3項目をA〜Dで評価し、全スコアの平均で算出します。</p>
+          <p className="text-sm text-gray-500 mb-4">評価者（最大3名）が以下の4項目をA〜Dで評価し、全スコアの平均で算出します。</p>
           <div className="overflow-x-auto">
             <table className="w-full">
               <tbody>
                 <TableRow cols={['評価項目', '内容']} header />
-                <TableRow cols={['勤怠', '遅刻・欠勤・無断欠席がないか']} />
+                <TableRow cols={['勤怠',   '遅刻・欠勤・無断欠席がないか']} />
                 <TableRow cols={['報連相', '報告・連絡・相談が適切にできているか']} />
                 <TableRow cols={['積極性', '仕事に対して積極的に取り組んでいるか']} />
+                <TableRow cols={['勤務態度', '職場でのマナー・言動・服装が適切か']} />
               </tbody>
             </table>
           </div>

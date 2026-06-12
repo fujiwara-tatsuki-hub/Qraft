@@ -33,17 +33,20 @@ export async function submitCompliance(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const memberId        = (formData.get('memberId') ?? '').toString();
-  const evaluatorType   = (formData.get('evaluatorType') ?? '').toString();
-  const attendanceGrade = (formData.get('attendanceGrade') ?? '').toString();
-  const reportingGrade  = (formData.get('reportingGrade') ?? '').toString();
-  const initiativeGrade = (formData.get('initiativeGrade') ?? '').toString();
+  const memberId          = (formData.get('memberId') ?? '').toString();
+  const evaluatorType     = (formData.get('evaluatorType') ?? '').toString();
+  const attendanceGrade   = (formData.get('attendanceGrade') ?? '').toString();
+  const reportingGrade    = (formData.get('reportingGrade') ?? '').toString();
+  const initiativeGrade   = (formData.get('initiativeGrade') ?? '').toString();
+  const workAttitudeGrade = (formData.get('workAttitudeGrade') ?? '').toString();
 
   if (!memberId) return { error: 'メンバーIDが不正です', success: false };
   if (!VALID_EVALUATOR_TYPES.has(evaluatorType))
     return { error: '評価者を選択してください', success: false };
-  if (!isGrade(attendanceGrade) || !isGrade(reportingGrade) || !isGrade(initiativeGrade))
-    return { error: 'グレードの値が不正です', success: false };
+  if (
+    !isGrade(attendanceGrade) || !isGrade(reportingGrade) ||
+    !isGrade(initiativeGrade) || !isGrade(workAttitudeGrade)
+  ) return { error: 'グレードの値が不正です', success: false };
 
   try {
     await upsertEvaluation({
@@ -52,6 +55,7 @@ export async function submitCompliance(
       attendanceGrade,
       reportingGrade,
       initiativeGrade,
+      workAttitudeGrade,
     });
     revalidatePath(`/member/${memberId}`);
     revalidatePath('/');

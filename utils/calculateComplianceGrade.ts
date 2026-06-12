@@ -17,7 +17,7 @@ export function scoreToGrade(score: number): Grade {
 }
 
 // メンバーの評価リストからコンプライアンスグレードを算出
-// 3評価者 × 3項目 = 最大9スコアの単純平均
+// 3評価者 × 4項目 = 最大12スコアの単純平均
 // evaluations が空の場合は未評価として undefined を返す
 export function calculateComplianceGrade(evaluations: Evaluation[]): Grade | undefined {
   if (evaluations.length === 0) return undefined;
@@ -28,6 +28,7 @@ export function calculateComplianceGrade(evaluations: Evaluation[]): Grade | und
     scores.push(gradeToScore(ev.attendanceGrade));
     scores.push(gradeToScore(ev.reportingGrade));
     scores.push(gradeToScore(ev.initiativeGrade));
+    scores.push(gradeToScore(ev.workAttitudeGrade));
   }
 
   const average = scores.reduce((sum, s) => sum + s, 0) / scores.length;

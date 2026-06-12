@@ -16,6 +16,7 @@ import EvaluationBadge from '@/components/EvaluationBadge';
 import MemberTable from '@/components/MemberTable';
 import TeamNameForm from '@/components/TeamNameForm';
 import LeaderSelectForm from '@/components/LeaderSelectForm';
+import AddMemberForm from '@/components/AddMemberForm';
 import type { Member } from '@/types/member';
 
 type Props = {
@@ -127,6 +128,12 @@ export default async function TeamDetailPage({ params }: Props) {
           <div>
             <p className="text-sm font-medium text-gray-700 mb-2">チーム名</p>
             <TeamNameForm teamId={teamWithGrades.id} currentName={teamWithGrades.name} />
+          </div>
+
+          {/* メンバー追加 */}
+          <div className="pt-5 border-t border-gray-100">
+            <p className="text-sm font-medium text-gray-700 mb-3">メンバー追加</p>
+            <AddMemberForm teamId={teamWithGrades.id} />
           </div>
 
           {/* リーダー・サブリーダー変更 */}

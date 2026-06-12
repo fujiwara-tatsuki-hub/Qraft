@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { upsertEvaluation } from '@/repositories/evaluationRepository';
 import { createDeadlineRecord } from '@/repositories/deadlineRepository';
 import { createReferralRecord } from '@/repositories/referralRepository';
-import { updateMemberName, getMemberById } from '@/repositories/memberRepository';
+import { updateMemberName, getMemberById, updateMemberTeam } from '@/repositories/memberRepository';
 import { updateTeamLeaderName, updateTeamSubLeaderName } from '@/repositories/teamRepository';
 import type { Grade } from '@/types';
 import type { EvaluatorType } from '@/types/evaluation';
@@ -141,5 +141,41 @@ export async function submitMemberName(
     return { error: null, success: true };
   } catch (e) {
     return { error: e instanceof Error ? e.message : '保存に失敗しました', success: false };
+  }
+}
+
+export async function submitTeamTransfer(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const memberId   = (formData.get('memberId') ?? '').toString();
+  const newTeamId  = (formData.get('newTeamId') ?? '').toString();
+
+  if (!memberId || !newTeamId)
+    return { error: '移動先チームを選択してください', success: false };
+
+  try {
+    const member = await getMemberById(memberId);
+    if (!member) return { error: 'メンバーが見つかりません', success: false };
+    if (member.teamId === newTeamId)
+      return { error: '現在と同じチームです', success: false };
+
+    // 元チームのリーダー/サブリーダー表示名をクリア
+    if (member.role === 'リーダー') {
+      await updateTeamLeaderName(member.teamId, '');
+    } else if (member.role === 'サブリーダー') {
+      await updateTeamSubLeaderName(member.teamId, '');
+    }
+
+    // チーム移動（役職はメンバーにリセット）
+    await updateMemberTeam(memberId, newTeamId);
+
+    revalidatePath(`/member/${memberId}`);
+    revalidatePath(`/team/${member.teamId}`);
+    revalidatePath(`/team/${newTeamId}`);
+    revalidatePath('/');
+    return { error: null, success: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : '移動に失敗しました', success: false };
   }
 }

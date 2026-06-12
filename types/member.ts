@@ -2,11 +2,19 @@ import type { Grade } from '@/types';
 
 export type MemberRole = 'リーダー' | 'サブリーダー' | 'メンバー';
 
+// DB に保存する英語 role 値
+export type DbMemberRole = 'leader' | 'sub_leader' | 'member';
+
 export type Member = {
   id: string;
   teamId: string;
   name: string;
   role: MemberRole;
-  // 評価グレードは ⑨ 自動評価ロジック実装後に値が入る
   overallGrade?: Grade;
+};
+
+export type CreateMemberInput = {
+  teamId: string;
+  name: string;
+  role: DbMemberRole;
 };

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getMemberById } from '@/repositories/memberRepository';
-import { getTeamById } from '@/repositories/teamRepository';
+import { getTeamById, getTeams } from '@/repositories/teamRepository';
 import { getEvaluationsByMemberId } from '@/repositories/evaluationRepository';
 import { getDeadlineRecordsByMemberId } from '@/repositories/deadlineRepository';
 import { getReferralRecordsByMemberId } from '@/repositories/referralRepository';
@@ -13,6 +13,7 @@ import { calculateReferralGrade } from '@/utils/calculateReferralGrade';
 import { calculateGrade } from '@/utils/calculateGrade';
 import EvaluationBadge from '@/components/EvaluationBadge';
 import MemberNameForm from '@/components/MemberNameForm';
+import TeamTransferForm from '@/components/TeamTransferForm';
 import ComplianceForm from '@/components/ComplianceForm';
 import DeadlineForm from '@/components/DeadlineForm';
 import ReferralForm from '@/components/ReferralForm';
@@ -34,8 +35,9 @@ export default async function MemberDetailPage({ params }: Props) {
   const member = await getMemberById(id);
   if (!member) notFound();
 
-  const [team, evaluations, deadlineRecords, referralRecords] = await Promise.all([
+  const [team, allTeams, evaluations, deadlineRecords, referralRecords] = await Promise.all([
     getTeamById(member.teamId),
+    getTeams(),
     getEvaluationsByMemberId(id),
     getDeadlineRecordsByMemberId(id),
     getReferralRecordsByMemberId(id),
@@ -84,10 +86,25 @@ export default async function MemberDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* 氏名変更 */}
+      {/* メンバー編集 */}
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-3">氏名変更</h2>
-        <MemberNameForm memberId={id} currentName={member.name} />
+        <h2 className="text-base font-semibold text-gray-900 mb-5">メンバー編集</h2>
+
+        <div className="space-y-5">
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-2">氏名変更</p>
+            <MemberNameForm memberId={id} currentName={member.name} />
+          </div>
+
+          <div className="pt-4 border-t border-gray-100">
+            <p className="text-sm font-medium text-gray-700 mb-2">チーム移動</p>
+            <TeamTransferForm
+              memberId={id}
+              currentTeamId={member.teamId}
+              teams={allTeams}
+            />
+          </div>
+        </div>
       </section>
 
       {/* ① コンプライアンス評価入力 */}

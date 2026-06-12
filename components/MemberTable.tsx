@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Member, MemberRole } from '@/types/member';
 import EvaluationBadge from '@/components/EvaluationBadge';
+import DeleteMemberButton from '@/components/DeleteMemberButton';
 
 const roleStyle: Record<MemberRole, string> = {
   'リーダー':    'bg-indigo-100 text-indigo-700',
@@ -20,7 +21,8 @@ export default function MemberTable({ members }: Props) {
           <tr className="border-b border-gray-200">
             <th className="text-left py-3 px-4 font-medium text-gray-500">氏名</th>
             <th className="text-left py-3 px-4 font-medium text-gray-500">役職</th>
-            <th className="text-center py-3 px-4 font-medium text-gray-500">個人総合評価</th>
+            <th className="text-center py-3 px-4 font-medium text-gray-500">総合評価</th>
+            <th className="py-3 px-4" />
           </tr>
         </thead>
         <tbody>
@@ -45,6 +47,9 @@ export default function MemberTable({ members }: Props) {
                 <div className="flex justify-center">
                   <EvaluationBadge grade={member.overallGrade} />
                 </div>
+              </td>
+              <td className="py-3 px-4 text-right">
+                <DeleteMemberButton memberId={member.id} memberName={member.name} />
               </td>
             </tr>
           ))}

@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { Member, MemberRole } from '@/types/member';
+import type { Member, MemberRole, CreateMemberInput } from '@/types/member';
 
 // Supabase から返される生の行型（snake_case）
 type MemberRow = {
@@ -48,6 +48,41 @@ export async function getMemberById(id: string): Promise<Member | null> {
   return toMember(data as MemberRow);
 }
 
+export async function createMember(input: CreateMemberInput): Promise<Member> {
+  const { data, error } = await supabase
+    .from('members')
+    .insert({ team_id: input.teamId, name: input.name, role: input.role })
+    .select()
+    .single();
+
+  if (error) throw new Error(`createMember: ${error.message}`);
+  return toMember(data as MemberRow);
+}
+
+export async function deleteMemberById(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(`deleteMemberById: ${error.message}`);
+}
+
+// チーム内で指定ロールを持つメンバーを全員 'member' に降格
+// メンバー追加時・チーム移動時にリーダー重複を防ぐために使用
+export async function clearRoleInTeam(
+  teamId: string,
+  role: 'leader' | 'sub_leader',
+): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .update({ role: 'member' })
+    .eq('team_id', teamId)
+    .eq('role', role);
+
+  if (error) throw new Error(`clearRoleInTeam: ${error.message}`);
+}
+
 export async function updateMemberName(id: string, name: string): Promise<void> {
   const { error } = await supabase
     .from('members')
@@ -56,8 +91,17 @@ export async function updateMemberName(id: string, name: string): Promise<void> 
   if (error) throw new Error(`updateMemberName: ${error.message}`);
 }
 
+// チームを移動する（役職はメンバーにリセット）
+export async function updateMemberTeam(memberId: string, newTeamId: string): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .update({ team_id: newTeamId, role: 'member' })
+    .eq('id', memberId);
+
+  if (error) throw new Error(`updateMemberTeam: ${error.message}`);
+}
+
 // チーム内の全メンバーを一旦 member にリセットし、指定メンバーに leader/sub_leader を付与
-// リーダー変更フォームから呼び出す
 export async function resetAndSetMemberRoles(
   teamId: string,
   leaderId: string,

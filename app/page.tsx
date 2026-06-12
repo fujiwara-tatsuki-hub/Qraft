@@ -1,65 +1,62 @@
-import Image from "next/image";
+import { getTeams } from '@/repositories/teamRepository';
+import { getMembersByTeamId } from '@/repositories/memberRepository';
+import { getEvaluationsByTeamId } from '@/repositories/evaluationRepository';
+import { getDeadlineRecordsByTeamId } from '@/repositories/deadlineRepository';
+import { getReferralRecordsByTeamId } from '@/repositories/referralRepository';
+import { calculateComplianceGrade } from '@/utils/calculateComplianceGrade';
+import { calculateDeadlineGrade } from '@/utils/calculateDeadlineGrade';
+import { calculateReferralGrade } from '@/utils/calculateReferralGrade';
+import { calculateGrade } from '@/utils/calculateGrade';
+import { calculateTeamScore } from '@/utils/calculateTeamScore';
+import TeamCard from '@/components/TeamCard';
+import type { Team } from '@/types/team';
 
-export default function Home() {
+// チームの全メンバー評価を取得し、各グレードを算出して Team に付与する
+// ランキング機能でも同じ処理が必要になるため、独立した関数として定義
+async function buildTeamWithGrades(team: Team): Promise<Team> {
+  const [members, evaluations, deadlineRecords, referralRecords] = await Promise.all([
+    getMembersByTeamId(team.id),
+    getEvaluationsByTeamId(team.id),
+    getDeadlineRecordsByTeamId(team.id),
+    getReferralRecordsByTeamId(team.id),
+  ]);
+
+  // メンバーごとに3評価 → 個人総合評価を算出
+  const perMember = members.map((m) => {
+    const compliance = calculateComplianceGrade(evaluations.filter((e) => e.memberId === m.id));
+    const deadline   = calculateDeadlineGrade(deadlineRecords.filter((d) => d.memberId === m.id));
+    const referral   = calculateReferralGrade(referralRecords.filter((r) => r.memberId === m.id));
+    const overall    = calculateGrade(compliance, deadline, referral);
+    return { compliance, deadline, referral, overall };
+  });
+
+  // 全メンバーの各評価を集計してチームグレードを算出
+  return {
+    ...team,
+    overallGrade:    calculateTeamScore(perMember.map((g) => g.overall)),
+    complianceGrade: calculateTeamScore(perMember.map((g) => g.compliance)),
+    deadlineGrade:   calculateTeamScore(perMember.map((g) => g.deadline)),
+    referralGrade:   calculateTeamScore(perMember.map((g) => g.referral)),
+  };
+}
+
+export default async function TeamsPage() {
+  const teams = await getTeams();
+
+  // 全チームを並列でグレード算出
+  const teamsWithGrades = await Promise.all(teams.map(buildTeamWithGrades));
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">チーム一覧</h1>
+        <p className="text-sm text-gray-500 mt-1">九州支店 全{teamsWithGrades.length}チーム</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {teamsWithGrades.map((team) => (
+          <TeamCard key={team.id} team={team} />
+        ))}
+      </div>
     </div>
   );
 }

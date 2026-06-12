@@ -96,7 +96,7 @@ export default async function MemberDetailPage({ params }: Props) {
           <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-5">
             <h2 className="text-lg font-semibold text-gray-900 mb-0.5">① コンプライアンス評価</h2>
             <p className="text-sm text-gray-400 mb-5">
-              評価者ごとに勤怠・報連相・積極性を入力してください。再保存で上書きされます。
+              評価者ごとに勤怠・報連相・積極性・勤務態度を入力してください。再保存で上書きされます。
             </p>
             <ComplianceForm memberId={id} existingEvaluations={evaluations} />
           </section>
@@ -111,9 +111,53 @@ export default async function MemberDetailPage({ params }: Props) {
 
           <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-5">
             <h2 className="text-lg font-semibold text-gray-900 mb-0.5">③ リファラル活動</h2>
-            <p className="text-sm text-gray-400 mb-5">
+            <p className="text-sm text-gray-400 mb-4">
               今回の活動実績を入力してください。記録は累積されます（{referralRecords.length}件）。
             </p>
+
+            {referralRecords.length > 0 && (
+              <div className="mb-6">
+                <div className="overflow-x-auto rounded-xl border border-gray-100">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100">
+                        <th className="text-left py-2.5 px-4 font-medium text-gray-500">日付</th>
+                        <th className="text-center py-2.5 px-4 font-medium text-gray-500">相談</th>
+                        <th className="text-center py-2.5 px-4 font-medium text-gray-500">面談</th>
+                        <th className="text-center py-2.5 px-4 font-medium text-gray-500">内定</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {referralRecords.map((r) => (
+                        <tr key={r.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                          <td className="py-2.5 px-4 text-gray-500">
+                            {new Date(r.createdAt).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                          </td>
+                          <td className="py-2.5 px-4 text-center text-gray-700">{r.consultationCount}</td>
+                          <td className="py-2.5 px-4 text-center text-gray-700">{r.interviewCount}</td>
+                          <td className="py-2.5 px-4 text-center text-gray-700">{r.offerCount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-indigo-50 border-t border-indigo-100">
+                        <td className="py-2.5 px-4 text-sm font-semibold text-indigo-700">合計</td>
+                        <td className="py-2.5 px-4 text-center text-sm font-semibold text-indigo-700">
+                          {referralRecords.reduce((s, r) => s + r.consultationCount, 0)}
+                        </td>
+                        <td className="py-2.5 px-4 text-center text-sm font-semibold text-indigo-700">
+                          {referralRecords.reduce((s, r) => s + r.interviewCount, 0)}
+                        </td>
+                        <td className="py-2.5 px-4 text-center text-sm font-semibold text-indigo-700">
+                          {referralRecords.reduce((s, r) => s + r.offerCount, 0)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            )}
+
             <ReferralForm memberId={id} />
           </section>
         </>

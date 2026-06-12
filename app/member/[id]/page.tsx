@@ -103,9 +103,50 @@ export default async function MemberDetailPage({ params }: Props) {
 
           <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-5">
             <h2 className="text-lg font-semibold text-gray-900 mb-0.5">② 期限厳守</h2>
-            <p className="text-sm text-gray-400 mb-5">
+            <p className="text-sm text-gray-400 mb-4">
               期限未達だったカテゴリを記録してください。記録は累積されます（{deadlineRecords.length}件）。
             </p>
+
+            {deadlineRecords.length > 0 && (() => {
+              const CATEGORY_LABELS: Record<string, string> = {
+                document:               '提出物',
+                training:               '研修受講',
+                transportation_expense: '交通費経費精算',
+                shift:                  'シフト提出',
+                other:                  'その他',
+              };
+              return (
+                <div className="mb-6 overflow-x-auto rounded-xl border border-gray-100">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100">
+                        <th className="text-left py-2.5 px-4 font-medium text-gray-500">日付</th>
+                        <th className="text-left py-2.5 px-4 font-medium text-gray-500">カテゴリ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {deadlineRecords.map((r) => (
+                        <tr key={r.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                          <td className="py-2.5 px-4 text-gray-500">
+                            {new Date(r.createdAt).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                          </td>
+                          <td className="py-2.5 px-4 text-gray-700">
+                            {CATEGORY_LABELS[r.category] ?? r.category}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-red-50 border-t border-red-100">
+                        <td className="py-2.5 px-4 text-sm font-semibold text-red-600">合計</td>
+                        <td className="py-2.5 px-4 text-sm font-semibold text-red-600">{deadlineRecords.length}件のNG</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              );
+            })()}
+
             <DeadlineForm memberId={id} />
           </section>
 

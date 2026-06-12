@@ -70,7 +70,7 @@ export default async function TeamsRankingPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Teams Ranking</h1>
+        <h1 className="text-3xl font-bold text-gray-900">チームランキング</h1>
         <p className="text-base text-gray-400 mt-1">全{ranked.length}チームの総合評価ランキング</p>
       </div>
 

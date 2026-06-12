@@ -68,9 +68,9 @@ export default async function MembersRankingPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Members Ranking</h1>
+        <h1 className="text-3xl font-bold text-gray-900">個人ランキング</h1>
         <p className="text-base text-gray-400 mt-1">
-          サブリーダー・メンバー {ranked.length}名の総合評価ランキング
+          サブリーダー・メンバー {ranked.length}名の個人評価ランキング
         </p>
       </div>
 

@@ -64,8 +64,8 @@ export default async function MembersPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Members List</h1>
-        <p className="text-base text-gray-400 mt-1">九州支店 全{sorted.length}名のメンバー</p>
+        <h1 className="text-3xl font-bold text-gray-900">メンバー一覧</h1>
+        <p className="text-base text-gray-400 mt-1">九州支店 全{sorted.length}名</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -75,7 +75,7 @@ export default async function MembersPage() {
               <th className="text-left py-3 px-5 font-medium text-gray-500">氏名</th>
               <th className="text-left py-3 px-5 font-medium text-gray-500">チーム</th>
               <th className="text-left py-3 px-5 font-medium text-gray-500">役職</th>
-              <th className="text-center py-3 px-5 font-medium text-gray-500">総合評価</th>
+              <th className="text-center py-3 px-5 font-medium text-gray-500">個人評価</th>
             </tr>
           </thead>
           <tbody>

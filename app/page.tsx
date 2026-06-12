@@ -46,7 +46,7 @@ export default async function TeamsPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Teams List</h1>
+        <h1 className="text-2xl font-bold text-gray-900">チーム一覧</h1>
         <p className="text-sm text-gray-400 mt-1">
           九州支店 全{teamsWithGrades.length}チームの評価状況
         </p>

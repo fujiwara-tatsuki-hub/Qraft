@@ -9,6 +9,16 @@ type MemberRow = {
   role: 'leader' | 'sub_leader' | 'member';
 };
 
+// getMemberById 用の拡張行型（プロフィールフィールドを含む）
+type FullMemberRow = MemberRow & {
+  phone:        string | null;
+  email:        string | null;
+  address:      string | null;
+  client:       string | null;
+  contact_name: string | null;
+  store_name:   string | null;
+};
+
 // DB の英語 role → 表示用の日本語 MemberRole
 const roleMap: Record<MemberRow['role'], MemberRole> = {
   leader:     'リーダー',
@@ -22,6 +32,18 @@ function toMember(row: MemberRow): Member {
     teamId: row.team_id,
     name:   row.name,
     role:   roleMap[row.role],
+  };
+}
+
+function toFullMember(row: FullMemberRow): Member {
+  return {
+    ...toMember(row),
+    phone:       row.phone        ?? undefined,
+    email:       row.email        ?? undefined,
+    address:     row.address      ?? undefined,
+    client:      row.client       ?? undefined,
+    contactName: row.contact_name ?? undefined,
+    storeName:   row.store_name   ?? undefined,
   };
 }
 
@@ -39,13 +61,13 @@ export async function getMembersByTeamId(teamId: string): Promise<Member[]> {
 export async function getMemberById(id: string): Promise<Member | null> {
   const { data, error } = await supabase
     .from('members')
-    .select('id, team_id, name, role')
+    .select('id, team_id, name, role, phone, email, address, client, contact_name, store_name')
     .eq('id', id)
     .maybeSingle();
 
   if (error) throw new Error(`getMemberById: ${error.message}`);
   if (!data) return null;
-  return toMember(data as MemberRow);
+  return toFullMember(data as FullMemberRow);
 }
 
 export async function createMember(input: CreateMemberInput): Promise<Member> {
@@ -69,7 +91,6 @@ export async function deleteMemberById(id: string): Promise<void> {
 }
 
 // チーム内で指定ロールを持つメンバーを全員 'member' に降格
-// メンバー追加時・チーム移動時にリーダー重複を防ぐために使用
 export async function clearRoleInTeam(
   teamId: string,
   role: 'leader' | 'sub_leader',
@@ -89,6 +110,34 @@ export async function updateMemberName(id: string, name: string): Promise<void> 
     .update({ name })
     .eq('id', id);
   if (error) throw new Error(`updateMemberName: ${error.message}`);
+}
+
+// プロフィール情報を一括更新
+export async function updateMemberProfile(
+  id: string,
+  data: {
+    name:        string;
+    phone:       string;
+    email:       string;
+    address:     string;
+    client:      string;
+    contactName: string;
+    storeName:   string;
+  },
+): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .update({
+      name:         data.name,
+      phone:        data.phone        || null,
+      email:        data.email        || null,
+      address:      data.address      || null,
+      client:       data.client       || null,
+      contact_name: data.contactName  || null,
+      store_name:   data.storeName    || null,
+    })
+    .eq('id', id);
+  if (error) throw new Error(`updateMemberProfile: ${error.message}`);
 }
 
 // チームを移動する（役職はメンバーにリセット）

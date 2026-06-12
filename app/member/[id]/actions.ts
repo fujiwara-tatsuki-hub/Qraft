@@ -4,7 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { upsertEvaluation } from '@/repositories/evaluationRepository';
 import { createDeadlineRecord } from '@/repositories/deadlineRepository';
 import { createReferralRecord } from '@/repositories/referralRepository';
-import { updateMemberName, getMemberById, updateMemberTeam } from '@/repositories/memberRepository';
+import {
+  updateMemberName,
+  updateMemberProfile,
+  getMemberById,
+  updateMemberTeam,
+} from '@/repositories/memberRepository';
 import { updateTeamLeaderName, updateTeamSubLeaderName } from '@/repositories/teamRepository';
 import type { Grade } from '@/types';
 import type { EvaluatorType } from '@/types/evaluation';
@@ -61,8 +66,8 @@ export async function submitDeadline(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const memberId   = (formData.get('memberId') ?? '').toString();
-  const category   = (formData.get('category') ?? '').toString();
+  const memberId    = (formData.get('memberId') ?? '').toString();
+  const category    = (formData.get('category') ?? '').toString();
   const isCompleted = formData.get('isCompleted') === 'true';
 
   if (!memberId) return { error: 'メンバーIDが不正です', success: false };
@@ -112,6 +117,46 @@ export async function submitReferral(
   }
 }
 
+// プロフィール情報（氏名・連絡先など）を一括更新
+export async function submitMemberProfile(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const memberId    = (formData.get('memberId')    ?? '').toString();
+  const name        = (formData.get('name')        ?? '').toString().trim();
+  const phone       = (formData.get('phone')       ?? '').toString().trim();
+  const email       = (formData.get('email')       ?? '').toString().trim();
+  const address     = (formData.get('address')     ?? '').toString().trim();
+  const client      = (formData.get('client')      ?? '').toString().trim();
+  const contactName = (formData.get('contactName') ?? '').toString().trim();
+  const storeName   = (formData.get('storeName')   ?? '').toString().trim();
+
+  if (!memberId) return { error: 'メンバーIDが不正です', success: false };
+  if (!name)     return { error: '氏名を入力してください', success: false };
+
+  try {
+    await updateMemberProfile(memberId, { name, phone, email, address, client, contactName, storeName });
+
+    // リーダー/サブリーダーの場合はチームの表示名も同期
+    const member = await getMemberById(memberId);
+    if (member?.role === 'リーダー') {
+      await updateTeamLeaderName(member.teamId, name);
+      revalidatePath(`/team/${member.teamId}`);
+      revalidatePath('/');
+    } else if (member?.role === 'サブリーダー') {
+      await updateTeamSubLeaderName(member.teamId, name);
+      revalidatePath(`/team/${member.teamId}`);
+      revalidatePath('/');
+    }
+
+    revalidatePath(`/member/${memberId}`);
+    return { error: null, success: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : '保存に失敗しました', success: false };
+  }
+}
+
+// 後方互換性のために残す（AddMemberForm / MemberNameForm から参照）
 export async function submitMemberName(
   _prevState: ActionState,
   formData: FormData,
@@ -125,7 +170,6 @@ export async function submitMemberName(
   try {
     await updateMemberName(memberId, name);
 
-    // リーダー/サブリーダーの場合はチームの表示名も同期
     const member = await getMemberById(memberId);
     if (member?.role === 'リーダー') {
       await updateTeamLeaderName(member.teamId, name);
@@ -148,8 +192,8 @@ export async function submitTeamTransfer(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const memberId   = (formData.get('memberId') ?? '').toString();
-  const newTeamId  = (formData.get('newTeamId') ?? '').toString();
+  const memberId  = (formData.get('memberId')  ?? '').toString();
+  const newTeamId = (formData.get('newTeamId') ?? '').toString();
 
   if (!memberId || !newTeamId)
     return { error: '移動先チームを選択してください', success: false };
@@ -160,14 +204,12 @@ export async function submitTeamTransfer(
     if (member.teamId === newTeamId)
       return { error: '現在と同じチームです', success: false };
 
-    // 元チームのリーダー/サブリーダー表示名をクリア
     if (member.role === 'リーダー') {
       await updateTeamLeaderName(member.teamId, '');
     } else if (member.role === 'サブリーダー') {
       await updateTeamSubLeaderName(member.teamId, '');
     }
 
-    // チーム移動（役職はメンバーにリセット）
     await updateMemberTeam(memberId, newTeamId);
 
     revalidatePath(`/member/${memberId}`);

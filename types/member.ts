@@ -10,13 +10,6 @@ export type Member = {
   teamId: string;
   name: string;
   role: MemberRole;
-  // 追加プロフィール情報
-  phone?: string;
-  email?: string;
-  address?: string;
-  client?: string;
-  contactName?: string;
-  storeName?: string;
   overallGrade?: Grade;
 };
 

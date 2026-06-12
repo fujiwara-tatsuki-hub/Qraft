@@ -6,7 +6,6 @@ import { createDeadlineRecord } from '@/repositories/deadlineRepository';
 import { createReferralRecord } from '@/repositories/referralRepository';
 import {
   updateMemberName,
-  updateMemberProfile,
   getMemberById,
   updateMemberTeam,
 } from '@/repositories/memberRepository';
@@ -66,9 +65,8 @@ export async function submitDeadline(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const memberId    = (formData.get('memberId') ?? '').toString();
-  const category    = (formData.get('category') ?? '').toString();
-  const isCompleted = formData.get('isCompleted') === 'true';
+  const memberId = (formData.get('memberId') ?? '').toString();
+  const category = (formData.get('category') ?? '').toString();
 
   if (!memberId) return { error: 'メンバーIDが不正です', success: false };
   if (!VALID_CATEGORIES.has(category))
@@ -78,7 +76,7 @@ export async function submitDeadline(
     await createDeadlineRecord({
       memberId,
       category: category as DeadlineCategory,
-      isCompleted,
+      isCompleted: false, // NGのみ記録
     });
     revalidatePath(`/member/${memberId}`);
     revalidatePath('/');
@@ -117,27 +115,20 @@ export async function submitReferral(
   }
 }
 
-// プロフィール情報（氏名・連絡先など）を一括更新
+// 氏名を更新（チーム表示名も同期）
 export async function submitMemberProfile(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const memberId    = (formData.get('memberId')    ?? '').toString();
-  const name        = (formData.get('name')        ?? '').toString().trim();
-  const phone       = (formData.get('phone')       ?? '').toString().trim();
-  const email       = (formData.get('email')       ?? '').toString().trim();
-  const address     = (formData.get('address')     ?? '').toString().trim();
-  const client      = (formData.get('client')      ?? '').toString().trim();
-  const contactName = (formData.get('contactName') ?? '').toString().trim();
-  const storeName   = (formData.get('storeName')   ?? '').toString().trim();
+  const memberId = (formData.get('memberId') ?? '').toString();
+  const name     = (formData.get('name')     ?? '').toString().trim();
 
   if (!memberId) return { error: 'メンバーIDが不正です', success: false };
   if (!name)     return { error: '氏名を入力してください', success: false };
 
   try {
-    await updateMemberProfile(memberId, { name, phone, email, address, client, contactName, storeName });
+    await updateMemberName(memberId, name);
 
-    // リーダー/サブリーダーの場合はチームの表示名も同期
     const member = await getMemberById(memberId);
     if (member?.role === 'リーダー') {
       await updateTeamLeaderName(member.teamId, name);

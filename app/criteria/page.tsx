@@ -139,9 +139,10 @@ export default function CriteriaPage() {
                 <table className="w-full">
                   <tbody>
                     <TableRow cols={['月あたりNG数', '評価']} header />
-                    <TableRow cols={['0.5件以下', 'B']} />
-                    <TableRow cols={['1.0件以下', 'C']} />
-                    <TableRow cols={['1.0件超', 'D']} />
+                    <TableRow cols={['0.5件以下', 'A']} />
+                    <TableRow cols={['1.0件以下', 'B']} />
+                    <TableRow cols={['1.5件以下', 'C']} />
+                    <TableRow cols={['1.5件超', 'D']} />
                   </tbody>
                 </table>
               </div>

@@ -9,9 +9,10 @@ import type { DeadlineRecord } from '@/types/deadlineRecord';
 // NG記録なし、2ヶ月以上                     → A
 //
 // NG記録あり（レート = NG件数 ÷ 経過月数）:
-//   レート ≤ 0.5件/月（2ヶ月に1件以内）    → B
-//   レート ≤ 1.0件/月（月1件程度）         → C
-//   レート  > 1.0件/月（月1件超）          → D
+//   レート ≤ 0.5件/月  → A
+//   レート ≤ 1.0件/月  → B
+//   レート ≤ 1.5件/月  → C
+//   レート  > 1.5件/月 → D
 export function calculateDeadlineGrade(
   records: DeadlineRecord[],
   memberCreatedAt?: string,
@@ -30,7 +31,8 @@ export function calculateDeadlineGrade(
   const months = Math.max(1, (Date.now() - earliestMs) / (1000 * 60 * 60 * 24 * 30));
   const rate = ngRecords.length / months;
 
-  if (rate <= 0.5) return 'B';
-  if (rate <= 1.0) return 'C';
+  if (rate <= 0.5) return 'A';
+  if (rate <= 1.0) return 'B';
+  if (rate <= 1.5) return 'C';
   return 'D';
 }

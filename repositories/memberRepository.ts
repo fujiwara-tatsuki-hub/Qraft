@@ -52,7 +52,8 @@ export async function getMembersByTeamId(teamId: string): Promise<Member[]> {
     .from('members')
     .select('id, team_id, name, role')
     .eq('team_id', teamId)
-    .order('created_at');
+    .order('order_index', { ascending: true })
+    .order('created_at',  { ascending: true });
 
   if (error) throw new Error(`getMembersByTeamId: ${error.message}`);
   return ((data as MemberRow[]) ?? []).map(toMember);
@@ -138,6 +139,14 @@ export async function updateMemberProfile(
     })
     .eq('id', id);
   if (error) throw new Error(`updateMemberProfile: ${error.message}`);
+}
+
+export async function updateMemberOrderIndex(id: string, orderIndex: number): Promise<void> {
+  const { error } = await supabase
+    .from('members')
+    .update({ order_index: orderIndex })
+    .eq('id', id);
+  if (error) throw new Error(`updateMemberOrderIndex: ${error.message}`);
 }
 
 // チームを移動する（役職はメンバーにリセット）

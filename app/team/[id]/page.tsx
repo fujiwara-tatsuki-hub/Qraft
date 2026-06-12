@@ -13,10 +13,7 @@ import { calculateReferralGrade } from '@/utils/calculateReferralGrade';
 import { calculateGrade } from '@/utils/calculateGrade';
 import { calculateTeamScore } from '@/utils/calculateTeamScore';
 import EvaluationBadge from '@/components/EvaluationBadge';
-import MemberTable from '@/components/MemberTable';
-import TeamNameForm from '@/components/TeamNameForm';
-import LeaderSelectForm from '@/components/LeaderSelectForm';
-import AddMemberForm from '@/components/AddMemberForm';
+import TeamMembersSection from '@/components/TeamMembersSection';
 import type { Member } from '@/types/member';
 
 type Props = {
@@ -26,7 +23,6 @@ type Props = {
 export default async function TeamDetailPage({ params }: Props) {
   const { id } = await params;
 
-  // チーム情報とメンバー一覧を並列取得
   const [team, teamMembers] = await Promise.all([
     getTeamById(id),
     getMembersByTeamId(id),
@@ -42,23 +38,19 @@ export default async function TeamDetailPage({ params }: Props) {
         getDeadlineRecordsByMemberId(member.id),
         getReferralRecordsByMemberId(member.id),
       ]);
-
       const complianceGrade = calculateComplianceGrade(evaluations);
       const deadlineGrade   = calculateDeadlineGrade(deadlineRecords);
       const referralGrade   = calculateReferralGrade(referralRecords);
       const overallGrade    = calculateGrade(complianceGrade, deadlineGrade, referralGrade);
-
       return { complianceGrade, deadlineGrade, referralGrade, overallGrade };
     })
   );
 
-  // メンバーテーブル用：個人総合評価を付与
   const membersWithGrades: Member[] = teamMembers.map((m, i) => ({
     ...m,
     overallGrade: memberGradeResults[i].overallGrade,
   }));
 
-  // チームグレード：全メンバーの各評価を集計
   const teamWithGrades = {
     ...team,
     overallGrade:    calculateTeamScore(memberGradeResults.map((g) => g.overallGrade)),
@@ -77,7 +69,7 @@ export default async function TeamDetailPage({ params }: Props) {
         ← チーム一覧
       </Link>
 
-      {/* チーム名・基本情報 */}
+      {/* チーム評価カード */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div>
@@ -91,11 +83,11 @@ export default async function TeamDetailPage({ params }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
             <span className="text-sm text-gray-400 w-24 shrink-0">リーダー</span>
-            <span className="text-sm text-gray-800 font-semibold">{teamWithGrades.leaderName}</span>
+            <span className="text-sm text-gray-800 font-semibold">{teamWithGrades.leaderName || '—'}</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
             <span className="text-sm text-gray-400 w-24 shrink-0">サブリーダー</span>
-            <span className="text-sm text-gray-800 font-semibold">{teamWithGrades.subLeaderName}</span>
+            <span className="text-sm text-gray-800 font-semibold">{teamWithGrades.subLeaderName || '—'}</span>
           </div>
         </div>
 
@@ -103,53 +95,15 @@ export default async function TeamDetailPage({ params }: Props) {
         <div className="pt-5 border-t border-gray-100">
           <p className="text-xs text-gray-400 mb-4">評価内訳</p>
           <div className="grid grid-cols-3 gap-4">
-            <EvaluationBadge grade={teamWithGrades.deadlineGrade}    label="期限厳守" />
-            <EvaluationBadge grade={teamWithGrades.referralGrade}    label="リファラル活動" />
-            <EvaluationBadge grade={teamWithGrades.complianceGrade}  label="コンプライアンス" />
+            <EvaluationBadge grade={teamWithGrades.deadlineGrade}   label="期限厳守" />
+            <EvaluationBadge grade={teamWithGrades.referralGrade}   label="リファラル活動" />
+            <EvaluationBadge grade={teamWithGrades.complianceGrade} label="コンプライアンス" />
           </div>
         </div>
       </div>
 
-      {/* メンバー一覧 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">メンバー一覧</h2>
-          <p className="text-sm text-gray-400 mt-0.5">{membersWithGrades.length}名</p>
-        </div>
-        <MemberTable members={membersWithGrades} />
-      </div>
-
-      {/* チーム編集 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-5">
-        <h2 className="text-base font-semibold text-gray-900 mb-5">チーム編集</h2>
-
-        <div className="space-y-6">
-          {/* チーム名変更 */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">チーム名</p>
-            <TeamNameForm teamId={teamWithGrades.id} currentName={teamWithGrades.name} />
-          </div>
-
-          {/* メンバー追加 */}
-          <div className="pt-5 border-t border-gray-100">
-            <p className="text-sm font-medium text-gray-700 mb-3">メンバー追加</p>
-            <AddMemberForm teamId={teamWithGrades.id} />
-          </div>
-
-          {/* リーダー・サブリーダー変更 */}
-          <div className="pt-5 border-t border-gray-100">
-            <p className="text-sm font-medium text-gray-700 mb-4">
-              リーダー・サブリーダー変更
-            </p>
-            <LeaderSelectForm
-              teamId={teamWithGrades.id}
-              members={teamMembers}
-              currentLeaderId={teamMembers.find((m) => m.role === 'リーダー')?.id}
-              currentSubLeaderId={teamMembers.find((m) => m.role === 'サブリーダー')?.id}
-            />
-          </div>
-        </div>
-      </div>
+      {/* メンバー一覧（編集機能付き） */}
+      <TeamMembersSection team={teamWithGrades} members={membersWithGrades} />
     </div>
   );
 }

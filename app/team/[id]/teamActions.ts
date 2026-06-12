@@ -13,6 +13,7 @@ import {
   deleteMemberById,
   clearRoleInTeam,
   resetAndSetMemberRoles,
+  updateMemberOrderIndex,
 } from '@/repositories/memberRepository';
 import type { DbMemberRole } from '@/types/member';
 
@@ -101,6 +102,16 @@ export async function submitAddMember(
   } catch (e) {
     return { error: e instanceof Error ? e.message : '追加に失敗しました', success: false };
   }
+}
+
+// メンバーの表示順を一括保存（client から orderedIds[] を直接渡す）
+export async function submitMemberOrder(
+  teamId: string,
+  orderedIds: string[],
+): Promise<void> {
+  await Promise.all(orderedIds.map((id, index) => updateMemberOrderIndex(id, index)));
+  revalidatePath(`/team/${teamId}`);
+  revalidatePath('/');
 }
 
 // フォームを使わず直接呼び出せるシンプルな削除関数

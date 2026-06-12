@@ -73,8 +73,8 @@ export default async function TeamDetailPage({ params }: Props) {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{teamWithGrades.name}</h1>
-            <p className="text-sm text-gray-400 mt-1">{teamWithGrades.memberCount}名</p>
+            <h1 className="text-3xl font-bold text-gray-900">{teamWithGrades.name}</h1>
+            <p className="text-base text-gray-400 mt-1">{teamWithGrades.memberCount}名</p>
           </div>
           <EvaluationBadge grade={teamWithGrades.overallGrade} label="総合評価" size="lg" />
         </div>

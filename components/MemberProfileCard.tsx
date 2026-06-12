@@ -15,6 +15,7 @@ type Props = {
   team: Team | null;
   allTeams: Team[];
   overallGrade?: Grade;
+  gradeLabel?: string;
 };
 
 const INITIAL: ActionState = { error: null, success: false };
@@ -35,7 +36,7 @@ function PencilIcon() {
   );
 }
 
-export default function MemberProfileCard({ member, team, allTeams, overallGrade }: Props) {
+export default function MemberProfileCard({ member, team, allTeams, overallGrade, gradeLabel = '総合評価' }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [state, formAction, isPending] = useActionState(submitMemberProfile, INITIAL);
   const router = useRouter();
@@ -99,7 +100,7 @@ export default function MemberProfileCard({ member, team, allTeams, overallGrade
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{member.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{member.name}</h1>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             <span className="text-sm text-gray-400">{team?.name}</span>
             <span
@@ -110,7 +111,7 @@ export default function MemberProfileCard({ member, team, allTeams, overallGrade
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <EvaluationBadge grade={overallGrade} label="総合評価" size="lg" />
+          <EvaluationBadge grade={overallGrade} label={gradeLabel} size="lg" />
           <button
             type="button"
             onClick={() => setIsEditing(true)}

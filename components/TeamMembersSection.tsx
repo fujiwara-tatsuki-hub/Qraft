@@ -117,8 +117,8 @@ export default function TeamMembersSection({ team, members }: Props) {
       {/* ヘッダー */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">メンバー一覧</h2>
-          <p className="text-sm text-gray-400 mt-0.5">{orderedMembers.length}名</p>
+          <h2 className="text-lg font-semibold text-gray-900">メンバー一覧</h2>
+          <p className="text-base text-gray-400 mt-0.5">{orderedMembers.length}名</p>
         </div>
         {isEditing ? (
           <button
@@ -142,7 +142,7 @@ export default function TeamMembersSection({ team, members }: Props) {
 
       {/* メンバーテーブル */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
               {isEditing && <th className="py-3 px-3 w-14" />}

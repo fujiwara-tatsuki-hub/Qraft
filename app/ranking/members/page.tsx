@@ -68,14 +68,14 @@ export default async function MembersRankingPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Members Ranking</h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900">Members Ranking</h1>
+        <p className="text-base text-gray-400 mt-1">
           サブリーダー・メンバー {ranked.length}名の総合評価ランキング
         </p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
               <th className="py-3 px-4 w-14 text-center font-medium text-gray-500">順位</th>

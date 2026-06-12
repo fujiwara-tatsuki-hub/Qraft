@@ -40,14 +40,6 @@ function TrophyIcon({ className }: { className?: string }) {
   );
 }
 
-function MedalIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -68,7 +60,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/',                label: 'Teams List',      icon: UsersIcon  },
   { href: '/members',         label: 'Members List',    icon: UserIcon   },
   { href: '/ranking/teams',   label: 'Teams Ranking',   icon: TrophyIcon },
-  { href: '/ranking/members', label: 'Members Ranking', icon: MedalIcon  },
+  { href: '/ranking/members', label: 'Members Ranking', icon: TrophyIcon },
 ];
 
 export default function Sidebar() {
@@ -78,10 +70,22 @@ export default function Sidebar() {
   return (
     <aside
       className={`hidden lg:flex flex-col shrink-0 bg-white border-r border-gray-100 transition-all duration-200 ${
-        collapsed ? 'w-14' : 'w-52'
+        collapsed ? 'w-14' : 'w-56'
       }`}
     >
-      <nav className="flex-1 px-2 py-4 space-y-0.5">
+      {/* 折り畳みトグル（最上部） */}
+      <div className={`px-2 pt-3 pb-2 border-b border-gray-100 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className="p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+          aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'}
+        >
+          {collapsed ? <ChevronRightIcon className="w-5 h-5" /> : <ChevronLeftIcon className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* ナビゲーション */}
+      <nav className="flex-1 px-2 py-3 space-y-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isNavActive(href, pathname);
           return (
@@ -89,7 +93,7 @@ export default function Sidebar() {
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-base font-medium transition-colors ${
                 collapsed ? 'justify-center' : ''
               } ${
                 active
@@ -103,24 +107,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {/* 折り畳みトグル */}
-      <div className="px-2 pb-4">
-        <button
-          onClick={() => setCollapsed((c) => !c)}
-          className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors ${
-            collapsed ? 'justify-center' : ''
-          }`}
-          aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'}
-        >
-          {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : (
-            <>
-              <ChevronLeftIcon className="w-4 h-4" />
-              <span>折り畳む</span>
-            </>
-          )}
-        </button>
-      </div>
     </aside>
   );
 }

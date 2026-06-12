@@ -46,7 +46,7 @@ export default async function MemberDetailPage({ params }: Props) {
 
   // リーダーはチーム全体の評価を表示
   let displayGrade: Grade | undefined = overallGrade;
-  const gradeLabel = isLeader ? 'チーム評価' : '総合評価';
+  const gradeLabel = isLeader ? 'チーム評価' : '個人評価';
 
   if (isLeader) {
     const [teamMembers, teamEvals, teamDeadlines, teamReferrals] = await Promise.all([

@@ -148,7 +148,7 @@ export default function TeamMembersSection({ team, members }: Props) {
               {isEditing && <th className="py-3 px-3 w-14" />}
               <th className="text-left py-3 px-4 font-medium text-gray-500">氏名</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">役職</th>
-              <th className="text-center py-3 px-4 font-medium text-gray-500">総合評価</th>
+              <th className="text-center py-3 px-4 font-medium text-gray-500">個人評価</th>
               {isEditing && <th className="py-3 px-4 w-16" />}
             </tr>
           </thead>
@@ -192,7 +192,9 @@ export default function TeamMembersSection({ team, members }: Props) {
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex justify-center">
-                    <EvaluationBadge grade={member.overallGrade} size="sm" />
+                    {member.role !== 'リーダー' && (
+                      <EvaluationBadge grade={member.overallGrade} size="sm" />
+                    )}
                   </div>
                 </td>
                 {isEditing && (

@@ -11,9 +11,18 @@ type NavItem = {
 };
 
 function isNavActive(href: string, pathname: string): boolean {
-  if (href === '/') return pathname === '/' || pathname.startsWith('/team/');
-  if (href === '/members') return pathname === '/members' || pathname.startsWith('/member/');
+  if (href === '/dashboard') return pathname === '/dashboard';
+  if (href === '/')         return pathname === '/' || pathname.startsWith('/team/');
+  if (href === '/members')  return pathname === '/members' || pathname.startsWith('/member/');
   return pathname.startsWith(href);
+}
+
+function DashboardIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+    </svg>
+  );
 }
 
 function UsersIcon({ className }: { className?: string }) {
@@ -40,6 +49,14 @@ function TrophyIcon({ className }: { className?: string }) {
   );
 }
 
+function DocumentTextIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+    </svg>
+  );
+}
+
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -56,20 +73,13 @@ function ChevronRightIcon({ className }: { className?: string }) {
   );
 }
 
-function DocumentTextIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-    </svg>
-  );
-}
-
 const NAV_ITEMS: NavItem[] = [
-  { href: '/',                label: 'チーム一覧',       icon: UsersIcon        },
-  { href: '/members',         label: 'メンバー一覧',     icon: UserIcon         },
-  { href: '/ranking/teams',   label: 'チームランキング', icon: TrophyIcon       },
-  { href: '/ranking/members', label: '個人ランキング',   icon: TrophyIcon       },
-  { href: '/criteria',        label: '評価基準',         icon: DocumentTextIcon },
+  { href: '/dashboard',        label: 'ダッシュボード', icon: DashboardIcon    },
+  { href: '/',                 label: 'チーム一覧',     icon: UsersIcon        },
+  { href: '/members',          label: 'メンバー一覧',   icon: UserIcon         },
+  { href: '/ranking/teams',    label: 'チームランキング', icon: TrophyIcon     },
+  { href: '/ranking/members',  label: '個人ランキング',  icon: TrophyIcon      },
+  { href: '/criteria',         label: '評価基準',        icon: DocumentTextIcon },
 ];
 
 export default function Sidebar() {
@@ -78,23 +88,36 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col shrink-0 bg-white border-r border-gray-100 transition-all duration-200 ${
+      className={`hidden lg:flex flex-col shrink-0 bg-slate-900 transition-all duration-200 ${
         collapsed ? 'w-14' : 'w-56'
       }`}
     >
-      {/* 折り畳みトグル（最上部） */}
-      <div className={`px-2 pt-3 pb-2 border-b border-gray-100 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
+      {/* ブランディング */}
+      <div className={`flex items-center gap-3 px-3 pt-5 pb-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'px-4'}`}>
+        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-black text-sm shrink-0">
+          Q
+        </div>
+        {!collapsed && (
+          <div>
+            <p className="text-sm font-bold text-white leading-tight">Qraft</p>
+            <p className="text-xs text-slate-400 leading-tight">コンプライアンス評価</p>
+          </div>
+        )}
+      </div>
+
+      {/* 折り畳みトグル */}
+      <div className={`px-2 pt-2 pb-1 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors"
           aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'}
         >
-          {collapsed ? <ChevronRightIcon className="w-5 h-5" /> : <ChevronLeftIcon className="w-5 h-5" />}
+          {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : <ChevronLeftIcon className="w-4 h-4" />}
         </button>
       </div>
 
       {/* ナビゲーション */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5">
+      <nav className="flex-1 px-2 py-1 space-y-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isNavActive(href, pathname);
           return (
@@ -102,12 +125,12 @@ export default function Sidebar() {
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-base font-medium transition-colors ${
+              className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 collapsed ? 'justify-center' : ''
               } ${
                 active
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
               }`}
             >
               <Icon className="w-5 h-5 shrink-0" />

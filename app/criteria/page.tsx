@@ -133,6 +133,9 @@ export default function CriteriaPage() {
             {[
               {
                 num: '①', title: '勤怠',
+                header: 'bg-indigo-50 border-indigo-100',
+                numColor: 'text-indigo-600',
+                dot: 'text-indigo-400',
                 points: [
                   '遅刻・早退・欠勤がない',
                   '勤怠打刻漏れがない',
@@ -143,6 +146,9 @@ export default function CriteriaPage() {
               },
               {
                 num: '②', title: '報連相',
+                header: 'bg-violet-50 border-violet-100',
+                numColor: 'text-violet-600',
+                dot: 'text-violet-400',
                 points: [
                   '自主的に報告・連絡・相談ができている',
                   'トラブルや変更事項を事前に共有できている',
@@ -153,6 +159,9 @@ export default function CriteriaPage() {
               },
               {
                 num: '③', title: '積極性',
+                header: 'bg-emerald-50 border-emerald-100',
+                numColor: 'text-emerald-600',
+                dot: 'text-emerald-400',
                 points: [
                   'リファラル活動に取り組んでいる',
                   '業務改善の提案や行動ができている',
@@ -164,6 +173,9 @@ export default function CriteriaPage() {
               },
               {
                 num: '④', title: '勤務態度',
+                header: 'bg-teal-50 border-teal-100',
+                numColor: 'text-teal-600',
+                dot: 'text-teal-400',
                 points: [
                   'レスポンスが速い',
                   '研修受講や依頼対応が迅速',
@@ -174,10 +186,10 @@ export default function CriteriaPage() {
                 ],
                 checks: ['レスポンス速度', '提出期限厳守', 'チャット反応', '協調性', 'ビジネスマナー'],
               },
-            ].map(({ num, title, points, checks }) => (
+            ].map(({ num, title, header, numColor, dot, points, checks }) => (
               <div key={num} className="border border-gray-100 rounded-xl overflow-hidden">
-                <div className="bg-gray-50 px-4 py-3 flex items-center gap-2 border-b border-gray-100">
-                  <span className="text-sm font-bold text-indigo-700">{num}</span>
+                <div className={`${header} px-4 py-3 flex items-center gap-2 border-b`}>
+                  <span className={`text-sm font-bold ${numColor}`}>{num}</span>
                   <span className="text-base font-semibold text-gray-800">{title}</span>
                 </div>
                 <div className="p-4 grid sm:grid-cols-2 gap-4">
@@ -186,7 +198,7 @@ export default function CriteriaPage() {
                     <ul className="space-y-1">
                       {points.map((p) => (
                         <li key={p} className="flex items-start gap-1.5 text-sm text-gray-700">
-                          <span className="text-indigo-400 mt-0.5 shrink-0">•</span>
+                          <span className={`${dot} mt-0.5 shrink-0`}>•</span>
                           {p}
                         </li>
                       ))}

@@ -49,14 +49,6 @@ function TrophyIcon({ className }: { className?: string }) {
   );
 }
 
-function DocumentTextIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-    </svg>
-  );
-}
-
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -74,12 +66,11 @@ function ChevronRightIcon({ className }: { className?: string }) {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/dashboard',        label: 'ダッシュボード', icon: DashboardIcon    },
-  { href: '/',                 label: 'チーム一覧',     icon: UsersIcon        },
-  { href: '/members',          label: 'メンバー一覧',   icon: UserIcon         },
-  { href: '/ranking/teams',    label: 'チームランキング', icon: TrophyIcon     },
-  { href: '/ranking/members',  label: '個人ランキング',  icon: TrophyIcon      },
-  { href: '/criteria',         label: '評価基準',        icon: DocumentTextIcon },
+  { href: '/dashboard',        label: 'ダッシュボード',   icon: DashboardIcon },
+  { href: '/',                 label: 'チーム一覧',       icon: UsersIcon     },
+  { href: '/members',          label: 'メンバー一覧',     icon: UserIcon      },
+  { href: '/ranking/teams',    label: 'チームランキング',  icon: TrophyIcon    },
+  { href: '/ranking/members',  label: '個人ランキング',    icon: TrophyIcon    },
 ];
 
 export default function Sidebar() {
@@ -88,12 +79,13 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col shrink-0 bg-slate-900 transition-all duration-200 ${
+      className={`hidden lg:flex flex-col shrink-0 transition-all duration-200 ${
         collapsed ? 'w-14' : 'w-56'
       }`}
+      style={{ background: 'linear-gradient(180deg, #1e2456 0%, #0d1130 100%)' }}
     >
       {/* ブランディング */}
-      <div className={`flex items-center gap-3 px-3 pt-5 pb-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'px-4'}`}>
+      <div className={`flex items-center gap-3 px-3 pt-5 pb-4 border-b border-white/10 ${collapsed ? 'justify-center' : 'px-4'}`}>
         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-black text-sm shrink-0">
           Q
         </div>
@@ -109,7 +101,7 @@ export default function Sidebar() {
       <div className={`px-2 pt-2 pb-1 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors"
+          className="p-1.5 rounded-lg text-slate-500 hover:bg-white/10 hover:text-slate-200 transition-colors"
           aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'}
         >
           {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : <ChevronLeftIcon className="w-4 h-4" />}
@@ -129,9 +121,10 @@ export default function Sidebar() {
                 collapsed ? 'justify-center' : ''
               } ${
                 active
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  ? 'text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-white/10 hover:text-white'
               }`}
+              style={active ? { background: 'linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%)' } : undefined}
             >
               <Icon className="w-5 h-5 shrink-0" />
               {!collapsed && <span>{label}</span>}
@@ -139,6 +132,34 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* 今月のハイライト */}
+      {!collapsed && (
+        <div className="mx-2 mb-3 mt-2">
+          <div
+            className="rounded-xl p-3.5"
+            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <svg className="w-3.5 h-3.5 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
+                <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+              </svg>
+              <span className="text-xs font-semibold text-yellow-400">今月のハイライト</span>
+            </div>
+            <p className="text-sm font-bold text-white leading-snug mb-3">
+              全チームA評価を<br />目指しましょう！
+            </p>
+            <svg width="100%" height="28" viewBox="0 0 132 28" preserveAspectRatio="none">
+              <rect x="0"   y="20" width="18" height="8"  rx="3" fill="rgba(129,140,248,0.4)" />
+              <rect x="23"  y="14" width="18" height="14" rx="3" fill="rgba(129,140,248,0.55)" />
+              <rect x="46"  y="9"  width="18" height="19" rx="3" fill="rgba(129,140,248,0.7)" />
+              <rect x="69"  y="5"  width="18" height="23" rx="3" fill="rgba(129,140,248,0.82)" />
+              <rect x="92"  y="2"  width="18" height="26" rx="3" fill="rgba(129,140,248,0.92)" />
+              <rect x="115" y="0"  width="18" height="28" rx="3" fill="rgba(129,140,248,1.0)" />
+            </svg>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

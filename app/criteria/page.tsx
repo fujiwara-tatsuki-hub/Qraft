@@ -100,17 +100,112 @@ export default function CriteriaPage() {
 
         {/* コンプライアンス評価 */}
         <Section number="①" title="コンプライアンス評価">
-          <p className="text-sm text-gray-500 mb-4">評価者（最大3名）が以下の4項目をA〜Dで評価し、全スコアの平均で算出します。</p>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <p className="text-sm text-gray-500 mb-5">
+            リーダー・営業担当・支店長（最大3名）が以下の4項目をA〜Dで評価し、全スコアの平均で算出します。
+          </p>
+
+          {/* グレード基準 */}
+          <div className="mb-6 overflow-x-auto rounded-xl border border-gray-100">
+            <table className="w-full text-sm">
               <tbody>
-                <TableRow cols={['評価項目', '内容']} header />
-                <TableRow cols={['勤怠',   '遅刻・欠勤・無断欠席がないか']} />
-                <TableRow cols={['報連相', '報告・連絡・相談が適切にできているか']} />
-                <TableRow cols={['積極性', '仕事に対して積極的に取り組んでいるか']} />
-                <TableRow cols={['勤務態度', '職場でのマナー・言動・服装が適切か']} />
+                <TableRow cols={['グレード', '基準']} header />
+                {[
+                  { grade: 'A', color: 'bg-violet-100 text-violet-700', label: '模範的。常に高いレベルで実践できている' },
+                  { grade: 'B', color: 'bg-blue-100 text-blue-700',     label: '実践できている' },
+                  { grade: 'C', color: 'bg-teal-100 text-teal-700',     label: '普通' },
+                  { grade: 'D', color: 'bg-orange-100 text-orange-700', label: '問題あり' },
+                ].map(({ grade, color, label }) => (
+                  <tr key={grade} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                    <td className="py-2.5 px-4">
+                      <span className={`inline-flex w-8 h-8 rounded-full items-center justify-center text-sm font-bold ${color}`}>
+                        {grade}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-4 text-gray-700">{label}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+          </div>
+
+          {/* 4項目の詳細 */}
+          <div className="space-y-4">
+            {[
+              {
+                num: '①', title: '勤怠',
+                points: [
+                  '遅刻・早退・欠勤がない',
+                  '勤怠打刻漏れがない',
+                  'マイコネ・freee・クライアント勤怠が整っている',
+                  'やむを得ない欠勤時も速やかに報告できている',
+                ],
+                checks: ['遅刻・早退・欠勤なし', '勤怠打刻漏れなし', '勤怠履歴問題なし', '連絡が迅速'],
+              },
+              {
+                num: '②', title: '報連相',
+                points: [
+                  '自主的に報告・連絡・相談ができている',
+                  'トラブルや変更事項を事前に共有できている',
+                  '自己判断で進めず、必要な相談ができている',
+                  '相談や質問をため込まない',
+                ],
+                checks: ['事前共有ができる', '必要な相談ができる', '独断で行動しない', '周囲と連携できる'],
+              },
+              {
+                num: '③', title: '積極性',
+                points: [
+                  'リファラル活動に取り組んでいる',
+                  '業務改善の提案や行動ができている',
+                  'AI学習など自己研鑽に取り組んでいる',
+                  '新しい知識やスキルの習得に前向きである',
+                  'チームや会社への貢献意識がある',
+                ],
+                checks: ['リファラル活動', '業務改善への取り組み', '学習・自己成長', '会社への貢献意識'],
+              },
+              {
+                num: '④', title: '勤務態度',
+                points: [
+                  'レスポンスが速い',
+                  '研修受講や依頼対応が迅速',
+                  '提出物の期限を守れる',
+                  'チャットへの反応がある（スタンプ含む）',
+                  '周囲への配慮や協調性がある',
+                  '社会人として基本的なマナーができている',
+                ],
+                checks: ['レスポンス速度', '提出期限厳守', 'チャット反応', '協調性', 'ビジネスマナー'],
+              },
+            ].map(({ num, title, points, checks }) => (
+              <div key={num} className="border border-gray-100 rounded-xl overflow-hidden">
+                <div className="bg-gray-50 px-4 py-3 flex items-center gap-2 border-b border-gray-100">
+                  <span className="text-sm font-bold text-indigo-700">{num}</span>
+                  <span className="text-base font-semibold text-gray-800">{title}</span>
+                </div>
+                <div className="p-4 grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 mb-2">評価観点</p>
+                    <ul className="space-y-1">
+                      {points.map((p) => (
+                        <li key={p} className="flex items-start gap-1.5 text-sm text-gray-700">
+                          <span className="text-indigo-400 mt-0.5 shrink-0">•</span>
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 mb-2">チェックポイント</p>
+                    <ul className="space-y-1">
+                      {checks.map((c) => (
+                        <li key={c} className="flex items-center gap-1.5 text-sm text-gray-700">
+                          <span className="text-emerald-500 shrink-0">✅</span>
+                          {c}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </Section>
 

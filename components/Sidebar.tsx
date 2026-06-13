@@ -85,15 +85,12 @@ export default function Sidebar() {
       style={{ background: 'linear-gradient(180deg, #1e2456 0%, #0d1130 100%)' }}
     >
       {/* ブランディング */}
-      <div className={`flex items-center gap-3 px-3 pt-5 pb-4 border-b border-white/10 ${collapsed ? 'justify-center' : 'px-4'}`}>
-        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-black text-sm shrink-0">
-          Q
-        </div>
+      <div className={`flex items-center px-4 pt-5 pb-4 border-b border-white/10 ${collapsed ? 'justify-center' : ''}`}>
         {!collapsed && (
-          <div>
-            <p className="text-sm font-bold text-white leading-tight">Qraft</p>
-            <p className="text-xs text-slate-400 leading-tight">コンプライアンス評価</p>
-          </div>
+          <p className="text-xl font-bold text-white tracking-wide">Qraft</p>
+        )}
+        {collapsed && (
+          <p className="text-base font-bold text-white">Q</p>
         )}
       </div>
 

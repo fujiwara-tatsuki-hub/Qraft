@@ -307,7 +307,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between px-8 py-7">
           <div className="flex-1">
             <h2 className="text-xl font-bold text-white mb-1.5">目指せ、全チームA評価！</h2>
-            <p className="text-indigo-200 text-sm mb-5 max-w-md">
+            <p className="text-indigo-200 text-sm mb-5 whitespace-nowrap">
               継続的な改善で、九州支店のコンプライアンスレベルをさらに向上させましょう。
             </p>
             <Link
@@ -319,10 +319,10 @@ export default async function DashboardPage() {
           </div>
           <div className="shrink-0 hidden sm:block ml-6">
             <svg width="140" height="90" viewBox="0 0 140 90" fill="none">
-              <rect x="8"   y="62" width="22" height="28" rx="5" fill="rgba(255,255,255,0.18)" />
-              <rect x="38"  y="42" width="22" height="48" rx="5" fill="rgba(255,255,255,0.28)" />
-              <rect x="68"  y="22" width="22" height="68" rx="5" fill="rgba(255,255,255,0.42)" />
-              <rect x="98"  y="6"  width="22" height="84" rx="5" fill="rgba(255,255,255,0.65)" />
+              <rect x="8"   y="62" width="22" height="28" rx="5" fill="rgba(255,255,255,0.08)" />
+              <rect x="38"  y="42" width="22" height="48" rx="5" fill="rgba(255,255,255,0.13)" />
+              <rect x="68"  y="22" width="22" height="68" rx="5" fill="rgba(255,255,255,0.20)" />
+              <rect x="98"  y="6"  width="22" height="84" rx="5" fill="rgba(255,255,255,0.30)" />
               <path d="M118 14 L128 4 L138 14" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               <line x1="128" y1="4" x2="128" y2="32" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
